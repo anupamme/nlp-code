@@ -23,7 +23,7 @@ excludedCategories = ['services', 'others', 'price-value']
 top_number_of_items = 3
 
 model_file = "/Volumes/anupam_work/code/word2vec-all/word2vec/trunk/vectors-phrase.bin"
-#model_file = "../data_2/vectors-phrase.bin"
+#model_file = "../embeddings-data/vectors-phrase.bin"
 
 antonym_file = 'data/antonyms/antonym_map.json'
 positive_file = 'data/antonyms/positives.json'
