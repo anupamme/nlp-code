@@ -271,7 +271,7 @@ def find_attribute_2(attribute_seed, user_input, phrase_parsing=False):
     
     if phrase_parsing:
         user_input_cleaned = user_input.replace('\'', ' i').replace('\"', '')
-        processed = proc.parse_doc(user_input_cleaned)
+        processed = proc.annotate(user_input_cleaned, properties={'annotators': 'tokenize,ssplit,parse,pos,lemma','outputFormat': 'json'})
         parse_tree_str = str(processed['sentences'][0]['parse']).replace(' ', ' ,').replace(' ', '\' ').replace('(', '(\'').replace(')', '\')').replace(',', ',\'').replace('\'(', '(').replace(')\'', ')').replace(')\')', '))').replace(')\')', '))')
         parse_tree = literal_eval(parse_tree_str)
         parse_from_parse_tree(parse_tree, 'NP', result_np)
@@ -372,7 +372,7 @@ def find_correct_adjective(adj_list, candidate_adjectives, sentiment):
     
 def find_sentiment_adjective(attribute_adjective_map, attribute_path, user_input):
     assert(attribute_path != None and attribute_path != [])
-    processed = proc.parse_doc(user_input)
+    processed = proc.parse_doc(user_input, properties={'annotators': 'tokenize,ssplit,parse,pos,lemma','outputFormat': 'json'})
     adj_list = filter_array(processed, possibleAdjTags)
     sentiment = processed['sentences'][0]['sentiment']
     str_path = str(attribute_path)
