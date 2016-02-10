@@ -372,7 +372,7 @@ def find_correct_adjective(adj_list, candidate_adjectives, sentiment):
     
 def find_sentiment_adjective(attribute_adjective_map, attribute_path, user_input):
     assert(attribute_path != None and attribute_path != [])
-    processed = proc.parse_doc(user_input, properties={'annotators': 'tokenize,ssplit,parse,pos,lemma','outputFormat': 'json'})
+    processed = proc.annotate(user_input, properties={'annotators': 'tokenize,ssplit,parse,pos,lemma,sentiment','outputFormat': 'json'})
     adj_list = filter_array(processed, possibleAdjTags)
     sentiment = processed['sentences'][0]['sentiment']
     str_path = str(attribute_path)
