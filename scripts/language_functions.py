@@ -128,12 +128,21 @@ def find_objects(processed):
             objects.append(dep['dependentGloss'])
     return objects
 
+def find_object_same_governer(processed_arr, governer_index):
+    for item in processed_arr:
+        if item['dep'] in possibleObjectTags and item['governer'] == governer_index:
+            return item
+    return None
+            
 def find_negation_map(processed):
     negation_map = {}
     for dep in processed['collapsed-ccprocessed-dependencies']:
         if dep['dep'] in possibleNegTags:
-            
-        
+            governer_index = dep['governer']
+            ob_same_governer = find_object_same_governer(processed['collapsed-ccprocessed-dependencies'], governer_index)
+            assert(ob_same_governer != None)
+            negation_map[ob_same_governer['dependentGloss']] = True
+    return negation_map
             
 def find_sub_obj(processed):
     deps = processed['sentences'][0]['collapsed-ccprocessed-dependencies']
