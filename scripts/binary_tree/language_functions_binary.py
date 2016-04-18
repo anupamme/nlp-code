@@ -30,6 +30,13 @@ def find_adjectives(processed):
         if token['pos'] in possibleAdjTags:
             adjectives.append(token['lemma'])
     return adjectives
+  
+def find_verbs(processed):
+    adjectives = []
+    for token in processed['tokens']:
+        if token['pos'] in possibleVerbTags:
+            adjectives.append(token['lemma'])
+    return adjectives
 
 def find_objects(processed):
     objects = []

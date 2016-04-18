@@ -156,22 +156,29 @@ def find_sub_obj(processed):
             obj_details = val
         if 'mod' in val['dep']:
             mod_details = val
-    print ('details: ' + str(subj_details) + ' ; ' + str(obj_details) + ' ; ' + str(mod_details))
+    #print ('details: ' + str(subj_details) + ' ; ' + str(obj_details) + ' ; ' + str(mod_details))
     #pos_tags = parsed_c['sentences'][0]['pos']
     tokens = processed['sentences'][0]['tokens']
-    print('tokens: ' + str(tokens))
+    #print('tokens: ' + str(tokens))
     obj = None
+    obj_pos = None
     if obj_details == None:
         if mod_details != None:
             index = mod_details['dependent'] - 1
-            print('index: ' + str(index))
-            obj = tokens[index]['word']
+            #print('index: ' + str(index))
+            obj = tokens[index]['lemma']
+            obj_pos = tokens[index]['pos']
     else:
-        obj = tokens[obj_details['dependent'] - 1]['word']
+        obj_index = obj_details['dependent'] - 1
+        obj = tokens[obj_index]['lemma']
+        obj_pos = tokens[obj_index]['pos']
     sub = None
+    sub_pos = None
     if subj_details is not None:
-        sub = tokens[subj_details['dependent'] - 1]['word']
-    return sub, obj        
+        sub_index = subj_details['dependent'] - 1
+        sub = tokens[sub_index]['lemma']
+        sub_pos = tokens[sub_index]['pos']
+    return sub, obj, sub_pos, obj_pos
         
 def filter_array(processed, possibleTags):
     count = 0
@@ -227,6 +234,7 @@ def parse_from_parse_tree(parse_tree, tag_name, result):
     
 def find_attribute_2(attribute_seed, user_input, phrase_parsing=False):
     assert(is_model_loaded())
+    user_input = user_input[:180]   # StanfordCoreNLP bug that it rejects inputs after this length.
     processed = proc.annotate(user_input, properties={'annotators': 'tokenize,ssplit,parse,pos,lemma','outputFormat': 'json'})
     if len(processed['sentences']) == 0:
         return None
@@ -234,7 +242,7 @@ def find_attribute_2(attribute_seed, user_input, phrase_parsing=False):
     print('nouns: ' + str(nouns))
     adjectives = filter_array(processed, possibleAdjTags)
     print('adjectives: ' + str(adjectives))
-    sub, obj = find_sub_obj(processed)
+    sub, obj, sub_pos, obj_pos = find_sub_obj(processed)
     print('sub, obj: ' + str(sub) + ' ; ' + str(obj))
     data = {}
     for noun in nouns:
@@ -250,14 +258,14 @@ def find_attribute_2(attribute_seed, user_input, phrase_parsing=False):
         else:
             data[n_adj] = 0.5
     if sub != None:
-        if sub in possibleNounTags or sub in possibleAdjTags or sub in possibleVerbTags:
+        if sub_pos in possibleNounTags or sub_pos in possibleAdjTags or sub_pos in possibleVerbTags:
             n_sub = normalize(sub)
             if n_sub in data:
                 data[n_sub] += 1.10
             else:
                 data[n_sub] = 1.10
     if obj != None:
-        if obj in possibleNounTags or sub in possibleAdjTags or sub in possibleVerbTags:
+        if obj_pos in possibleNounTags or obj_pos in possibleAdjTags or obj_pos in possibleVerbTags:
             n_obj = normalize(obj)
             if n_obj in data:
                 data[n_obj] += 1.01
@@ -297,7 +305,8 @@ def find_max_adjective(adj, candidate_adjectives):
                 max_distance = dist
                 #print 'possible correct adj item: ' + str(max_adj) + ' ; ' + str(max_distance)
         except KeyError:
-            print ('Key error for: ' + adj + ' ; ' + candidate)
+#            print ('Key error for: ' + adj + ' ; ' + candidate)
+            a = 1
     return max_adj, max_distance
 
 def convert_sentiment_to_int(sentiment):
