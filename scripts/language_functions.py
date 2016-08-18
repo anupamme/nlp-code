@@ -17,6 +17,8 @@ possibleAdjTags = ['JJ', 'JJR', 'JJS', 'RB', 'RBS', 'RBR']
 possibleVerbTags = ['VB', 'VBD', 'VBG', 'VBN', 'VBP', 'VBZ']
 possibleObjectTags = ['obj', 'nobj']
 possibleNegTags = ['neg']
+possiblePronounTags = ['PRP']
+possibleAdverbs = ['RB', 'RBR', 'RBS']
 
 #image data.
 excludedCategories = ['services', 'others', 'price-value']
@@ -118,6 +120,20 @@ def find_nouns(processed):
     nouns = []
     for token in processed['tokens']:
         if token['pos'] in possibleNounTags:
+            nouns.append(token['lemma'])
+    return nouns
+
+def find_nouns(processed):
+    nouns = []
+    for token in processed['tokens']:
+        if token['pos'] in possibleNounTags:
+            nouns.append(token['lemma'])
+    return nouns
+
+def find_pronouns(processed):
+    nouns = []
+    for token in processed['tokens']:
+        if token['pos'] in possiblePronounTags:
             nouns.append(token['lemma'])
     return nouns
 

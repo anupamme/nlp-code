@@ -9,6 +9,8 @@ possibleAdjTags = ['JJ', 'JJR', 'JJS', 'RB', 'RBS', 'RBR']
 possibleVerbTags = ['VB', 'VBD', 'VBG', 'VBN', 'VBP', 'VBZ']
 possibleObjectTags = ['obj', 'nobj', 'dobj']
 possibleNegTags = ['neg']
+possiblePronounTags = ['PRP']
+possibleAdverbs = ['RB', 'RBR', 'RBS']
 
 def load_model_files():
     global nlp
@@ -21,6 +23,20 @@ def find_nouns(processed):
     nouns = []
     for token in processed['tokens']:
         if token['pos'] in possibleNounTags:
+            nouns.append(token['lemma'])
+    return nouns
+
+def find_pronouns(processed):
+    nouns = []
+    for token in processed['tokens']:
+        if token['pos'] in possiblePronounTags:
+            nouns.append(token['lemma'])
+    return nouns
+
+def find_adverbs(processed):
+    nouns = []
+    for token in processed['tokens']:
+        if token['pos'] in possibleAdverbs:
             nouns.append(token['lemma'])
     return nouns
 
