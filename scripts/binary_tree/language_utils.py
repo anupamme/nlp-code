@@ -19,9 +19,10 @@ final_state = -1
 def parse_number(user_input):
     val = re.findall(r'\d+\.?\d+', user_input)
     if len(val) > 0:
-        return val[0]
+        print('debug: parse_number return - ' + str(val[0]))
+        return True, val[0]
     else:
-        return -1
+        return False, None
     
 def parse_date_time(user_input):
     cal = pdt.Calendar()
@@ -117,11 +118,14 @@ def find_category(user_input, category_tree):
         noun_arr = []
         pronoun_arr = []
         adverb_arr = []
+        verb_arr = []
         output = nlp.annotate(user_input, properties={'annotators': 'tokenize,ssplit,pos,lemma,depparse','outputFormat': 'json'})
+        print('output: ' + str(output))
         for output_sent in output['sentences']:
             noun_arr = noun_arr + lang.find_nouns(output_sent)
             pronoun_arr = pronoun_arr + lang.find_pronouns(output_sent)
             adverb_arr = adverb_arr + lang.find_adverbs(output_sent)
+            verb_arr = verb_arr + lang.find_verbs(output_sent)
         is_negation = is_negation_present(output['sentences'][0])
         # assign a score of 1.5 to pronoun and 2 to nouns.
         final_arr = {}
@@ -131,6 +135,11 @@ def find_category(user_input, category_tree):
             final_arr[adv] = 2
         for pro in pronoun_arr:
             final_arr[pro] = 1.5
+        for verb in verb_arr:
+            final_arr[verb] = 1.5
+        if is_negation:
+            # modify the final_arr based on where negation is attached to.
+            a = 1
         max_score = -1
         max_category = -1
         for category in category_data:
@@ -144,6 +153,17 @@ def find_category(user_input, category_tree):
                 max_category = category
     
     return max_category, max_score
+
+'''
+Algorithm:
+    1. find the node with neg. say node n.
+    2. check the siblings of 
+    3. 
+
+XXX: Come back right now not clear how to implement this.
+'''
+def get_associative_word(tree, word, candidates):
+    return
 
 def get_nouns_objects(output):
     noun_arr = []
